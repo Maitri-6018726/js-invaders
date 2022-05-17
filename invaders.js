@@ -2,7 +2,7 @@ let player = {
     x: 400, y:560
 };
 
-let bullet = null;
+let bullets = [];
 
 let direction = {
     left: false,
@@ -15,26 +15,29 @@ function update(){
     if(direction.left == true){
         if(player.x > 30){
         player.x -= 10;
-    }
+        }
     }
     if(direction.right == true){
         if(player.x < 770){
         player.x += 10;
-    }
+        }
     }
     if(direction.up == true){
         if(player.y > 0){
         player.y -= 10;
-    }
+        }
     }
     if(direction.down == true){
-        if(player.y < 560)
+        if(player.y < 560){
         player.y += 10;
+        }
     }
 
-    if(bullet != null){
-        bullet.y -= 10;
+    //update
+    for(let index = 0; index < bullets.length; index++) {
+        bullets[index].y -= 10;
     }
+
     draw();
 }
 
@@ -56,16 +59,25 @@ function draw(){
     context.lineTo(player.x - 30, player.y +40);
     context.lineTo(player.x + 30, player.y +40);
     context.fill();
-    
-    if(bullet != null) {
+
+    // draw()
+    for(let index = 0; index < bullets.length; index++) {
+        const bullet = bullets[index];
         context.fillStyle = "#eb4646";
         context.beginPath();
-        context.arc(bullet.x, bullet.y, 10, 0, Math.PI * 2);
+        context.arc(bullet.x, bullet.y, 5, 0, Math.PI * 2);
         context.fill();
-    }
+        }
+    
+    // if(bullet != null) {
+    //     context.fillStyle = "#eb4646";
+    //     context.beginPath();
+    //     context.arc(bullet.x, bullet.y, 10, 0, Math.PI * 2);
+    //     context.fill();
+    // }
 }
 function setup(){
-draw();
+    draw();
 }
 
 
@@ -88,12 +100,12 @@ function keydown(event){
             // player.y += 15;
             break
         case " ":
-            bullet = {
+            bullets.push( {
                 x: player.x,
                 y: player.y
-            };
+            });
             break;
-}
+    }
 }
 
 function keyup(event){
@@ -110,7 +122,7 @@ function keyup(event){
         case "ArrowDown":
             direction.down = false
             break
-}
+    }
 }
 window.addEventListener("load", setup);
 window.addEventListener("keydown", keydown);
