@@ -1,3 +1,38 @@
+const enemy1 = new Image();
+enemy1.src = "enemy1.png"
+
+
+class Enemy{
+    x;
+    y;
+    size;
+    hp;
+    cooldown;
+
+    constructor(x,y, size, hp){
+        this.x = x;
+        this.y = y;
+        this.size = size;
+        this.hp = hp;
+        this.cooldown = 0;
+    }
+
+    draw(context){
+        context.drawImage(enemy1, this.x, this.y, this.size, this.size)
+    }
+
+    update(){
+        if(this.cooldown == 0){
+        this.x += Math.random()*10-5;
+        this.y += Math.random()*10-5;
+        this.cooldown = 20;
+        }
+        this.cooldown -=1;
+    }
+}
+
+//new enemey (10, 20, 5, 50)
+
 class Bullet {
     x;
     y;
@@ -8,22 +43,22 @@ class Bullet {
     }
 
     update(){
-        this.y -= 10;
+        this.y -= 25;
     }
 
     draw(context){
-        context.fillStyle = "#eb4646";
+        context.fillStyle = "#d9d13d";
         context.beginPath();
-        context.arc(this.x, this    .y, 5, 0, Math.PI * 2);
+        context.arc(this.x, this.y, 5, 0, Math.PI * 2);
         context.fill();
         }
     }
 
-let player = {
+    let player = {
     x: 400, 
     y:560,
 
-shoot: function(){
+    shoot: function(){
         return new Bullet(this.x, this.y);
     },
 
@@ -51,7 +86,7 @@ shoot: function(){
 },
 
     draw: function(context){
-    context.fillStyle = "#c93265"
+    context.fillStyle = "#c73dd9"
     // context.fillRect(390, 580, 20, 80)
     context.beginPath();
     context.moveTo(player.x, player.y);
@@ -63,21 +98,33 @@ shoot: function(){
 
 
 let bullets = [];
+let enemies = [];
 
 let direction = {
     left: false,
     right: false,
     up: false,
     down: false,
+    shoot: false,
 };
 
 function update(){
     player.update();
 
+    if(direction.shoot){
+        let bullet = player.shoot();
+        bullets.push(bullet);
+    }
+
     //update
     for(let index = 0; index < bullets.length; index++) {
         const bullet = bullets[index];
         bullet.update();
+    }
+
+    for(let index =0; index < enemies.length; index++){
+        const enemey = enemies[index];
+        enemey.update();
     }
 
     draw();
@@ -97,6 +144,12 @@ function draw(){
     player.draw(context);
 
     // draw()
+    
+    for(let index = 0; index < enemies.length; index++){
+        const enemey = enemies [index];
+        enemey.draw(context);
+    }
+
     for(let index = 0; index < bullets.length; index++) {
         const bullet = bullets[index];
         bullet.draw(context)
@@ -104,6 +157,8 @@ function draw(){
 }
 function setup(){
     draw();
+    let enemey = new Enemy(350, 200, 90, 50)
+    enemies.push(enemey);
 }
 
 
@@ -123,11 +178,10 @@ function keydown(event){
 
         case "ArrowDown":
             direction.down = true
-            break
+            break;
 
         case " ":
-            let bullet = player.shoot();
-            bullets.push( bullet);
+            direction.shoot = true
             break;
     }
 }
@@ -145,7 +199,11 @@ function keyup(event){
             break;
         case "ArrowDown":
             direction.down = false
-            break
+            break;
+
+        case " ":
+            direction.shoot = false;
+            break;
     }
 }
 window.addEventListener("load", setup);
