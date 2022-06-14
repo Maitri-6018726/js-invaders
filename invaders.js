@@ -27,7 +27,21 @@ class Enemy{
         this.y += Math.random()*10-5;
         this.cooldown = 20;
         }
+
         this.cooldown -=1;
+    }
+
+    hit(bullet){
+        if(bullet.x >= this.x && 
+           bullet.y >= this.y &&
+           bullet.x <= this.x + this.size &&
+           bullet.y <= this.y + this.size
+           ){
+            this.hp -= 10;
+            return true
+        }else{
+            return false    
+        }
     }
 }
 
@@ -127,6 +141,19 @@ function update(){
         enemey.update();
     }
 
+    for(let bindex = 0; bindex < bullets.length; bindex++){
+        const bullet = bullets[bindex];
+
+        for(let eindex = 0; eindex < enemies.length; eindex++){
+            const enemey = enemies[eindex];
+
+            if(enemey.hit(bullet)) {
+                bullets.splice(bindex, 1)
+            }
+        }
+
+    }
+
     draw();
 }
 
@@ -157,7 +184,7 @@ function draw(){
 }
 function setup(){
     draw();
-    let enemey = new Enemy(350, 200, 90, 50)
+    let enemey = new Enemy(370, 200, 90, 50)
     enemies.push(enemey);
 }
 
